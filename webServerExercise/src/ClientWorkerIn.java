@@ -3,11 +3,11 @@ import java.io.InputStream;
 import java.net.Socket;
 
 public class ClientWorkerIn extends Thread implements Runnable {
-    private final Socket socket;
+    private InputStream input;
 
 
-    public ClientWorkerIn(Socket socket, InputStream input){
-        this.socket = socket;
+    public ClientWorkerIn(InputStream input){
+        this.input = input;
     }
 
     @Override
@@ -16,20 +16,17 @@ public class ClientWorkerIn extends Thread implements Runnable {
             handleIn();
         } catch (IOException e){
             e.printStackTrace();
-        } catch (InterruptedException f){
-            f.printStackTrace();
         }
     }
 
-    private void handleIn() throws IOException, InterruptedException {
-        InputStream input = this.socket.getInputStream();
+    private void handleIn() throws IOException {
         String msgIn = "";
-        while (true) {//this.socket.isBound();
+        do {
             byte[] dataIn = new byte[1024];
             input.read(dataIn);
             msgIn = new String(dataIn);
             msgIn = msgIn.trim();
             System.out.println(msgIn);
-        }
+        }while (!msgIn.contains("Leaving..."));
     }
 }
